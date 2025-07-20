@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { getSessionId } from '@/utils/sessionManager';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import ProductGrid from '@/components/ProductGrid';
@@ -14,50 +16,173 @@ interface UnitOption {
 }
 
 interface CartItem {
-  id: number;
-  name: string;
+  id: string;
+  session_id: string;
+  product_id: string;
+  product_name: string;
   price: number;
   image: string;
   quantity: number;
-  selectedUnit: UnitOption;
-  finalPrice: number;
+  selected_unit: UnitOption;
+  final_price: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface SupabaseCartItem {
+  id: string;
+  session_id: string;
+  product_id: string;
+  product_name: string;
+  price: number;
+  quantity: number;
+  selected_unit: any; // JSON field
+  final_price: number;
+  created_at: string;
+  updated_at: string;
 }
 
 const Index = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleAddToCart = (product: any) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
-      
-      if (existingItem) {
-        return prevItems.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        return [...prevItems, { ...product, quantity: 1 }];
-      }
-    });
+  useEffect(() => {
+    loadCartItems();
+  }, []);
+
+  // Load cart items from Supabase on page load
+  const loadCartItems = async () => {
+    try {
+      const sessionId = getSessionId();
+      const { data, error } = await supabase
+        .from('cart_items')
+        .select('*')
+        .eq('session_id', sessionId);
+
+      if (error) throw error;
+
+      // Transform the data to match our interface
+      const transformedItems = (data || []).map((item: SupabaseCartItem) => ({
+        ...item,
+        image: '', // We'll fetch this from products if needed
+        selected_unit: typeof item.selected_unit === 'string' 
+          ? JSON.parse(item.selected_unit) 
+          : item.selected_unit
+      }));
+      setCartItems(transformedItems);
+    } catch (err) {
+      console.error('Error loading cart items:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleUpdateQuantity = (id: number, quantity: number) => {
+  // Add item to cart and save to Supabase
+  const handleAddToCart = async (product: any) => {
+    try {
+      const sessionId = getSessionId();
+      
+      // Check if item already exists in cart
+      const existingItemIndex = cartItems.findIndex(item => 
+        item.product_id === product.id.toString() && 
+        JSON.stringify(item.selected_unit) === JSON.stringify(product.selectedUnit)
+      );
+
+      if (existingItemIndex >= 0) {
+        // Update existing item quantity
+        const updatedItem = {
+          ...cartItems[existingItemIndex],
+          quantity: cartItems[existingItemIndex].quantity + 1
+        };
+        
+        const { error } = await supabase
+          .from('cart_items')
+          .update({ quantity: updatedItem.quantity })
+          .eq('id', updatedItem.id);
+
+        if (error) throw error;
+
+        setCartItems(prevItems =>
+          prevItems.map((item, index) =>
+            index === existingItemIndex ? updatedItem : item
+          )
+        );
+      } else {
+        // Insert new item
+        const newItem = {
+          session_id: sessionId,
+          product_id: product.id.toString(),
+          product_name: product.name,
+          price: product.price,
+          quantity: 1,
+          selected_unit: product.selectedUnit,
+          final_price: product.finalPrice,
+          image: product.image
+        };
+
+        const { data, error } = await supabase
+          .from('cart_items')
+          .insert([newItem])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Transform the returned data
+        const transformedItem = {
+          ...data,
+          image: newItem.image,
+          selected_unit: typeof data.selected_unit === 'string' 
+            ? JSON.parse(data.selected_unit) 
+            : data.selected_unit
+        };
+        setCartItems(prevItems => [...prevItems, transformedItem]);
+      }
+    } catch (err) {
+      console.error('Error adding to cart:', err);
+    }
+  };
+
+  // Update item quantity in cart and Supabase
+  const handleUpdateQuantity = async (id: string, quantity: number) => {
     if (quantity <= 0) {
       handleRemoveItem(id);
       return;
     }
-    
-    setCartItems(prevItems =>
-      prevItems.map(item =>
-        item.id === id ? { ...item, quantity } : item
-      )
-    );
+
+    try {
+      const { error } = await supabase
+        .from('cart_items')
+        .update({ quantity })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setCartItems(prevItems =>
+        prevItems.map(item =>
+          item.id === id ? { ...item, quantity } : item
+        )
+      );
+    } catch (err) {
+      console.error('Error updating cart item:', err);
+    }
   };
 
-  const handleRemoveItem = (id: number) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+  // Remove item from cart and Supabase
+  const handleRemoveItem = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('cart_items')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+    } catch (err) {
+      console.error('Error removing cart item:', err);
+    }
   };
 
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);

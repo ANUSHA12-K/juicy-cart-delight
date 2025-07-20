@@ -14,7 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cart_items: {
+        Row: {
+          created_at: string
+          final_price: number
+          id: string
+          price: number
+          product_id: string | null
+          product_name: string
+          quantity: number
+          selected_unit: Json
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          final_price: number
+          id?: string
+          price: number
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          selected_unit: Json
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          final_price?: number
+          id?: string
+          price?: number
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          selected_unit?: Json
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          name: string
+          price: number
+          unit: string
+          unit_options: Json
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          image_url: string
+          name: string
+          price: number
+          unit: string
+          unit_options: Json
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string
+          name?: string
+          price?: number
+          unit?: string
+          unit_options?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

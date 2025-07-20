@@ -7,21 +7,25 @@ interface UnitOption {
 }
 
 interface CartItem {
-  id: number;
-  name: string;
+  id: string;
+  session_id: string;
+  product_id: string;
+  product_name: string;
   price: number;
   image: string;
   quantity: number;
-  selectedUnit: UnitOption;
-  finalPrice: number;
+  selected_unit: UnitOption;
+  final_price: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface CartSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   cartItems: CartItem[];
-  onUpdateQuantity: (id: number, quantity: number) => void;
-  onRemoveItem: (id: number) => void;
+  onUpdateQuantity: (id: string, quantity: number) => void;
+  onRemoveItem: (id: string) => void;
 }
 
 const CartSidebar = ({ 
@@ -31,7 +35,7 @@ const CartSidebar = ({
   onUpdateQuantity, 
   onRemoveItem 
 }: CartSidebarProps) => {
-  const total = cartItems.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
+  const total = cartItems.reduce((sum, item) => sum + (item.final_price * item.quantity), 0);
 
   if (!isOpen) return null;
 
@@ -75,13 +79,13 @@ const CartSidebar = ({
                   <div key={item.id} className="flex items-center gap-4 p-4 bg-muted/50 rounded-xl">
                     <img
                       src={item.image}
-                      alt={item.name}
+                      alt={item.product_name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div className="flex-1">
-                      <h3 className="font-medium text-foreground">{item.name}</h3>
-                      <p className="text-primary font-semibold">₹{item.finalPrice.toFixed(0)} per {item.selectedUnit.unit}</p>
-                      <p className="text-xs text-muted-foreground">{item.selectedUnit.label}</p>
+                      <h3 className="font-medium text-foreground">{item.product_name}</h3>
+                      <p className="text-primary font-semibold">₹{item.final_price.toFixed(0)} per {item.selected_unit.unit}</p>
+                      <p className="text-xs text-muted-foreground">{item.selected_unit.label}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
@@ -115,7 +119,9 @@ const CartSidebar = ({
             <div className="p-6 border-t border-border">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-lg font-semibold text-foreground">Total:</span>
-                <span className="text-2xl font-bold text-primary">₹{total.toFixed(0)}</span>
+                <span className="text-2xl font-bold text-primary">
+                  ₹{new Intl.NumberFormat('en-IN').format(total)}
+                </span>
               </div>
               <button className="w-full btn-fruit btn-primary">
                 Proceed to Checkout
