@@ -7,12 +7,20 @@ import AboutSection from '@/components/AboutSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 
+interface UnitOption {
+  label: string;
+  multiplier: number;
+  unit: string;
+}
+
 interface CartItem {
   id: number;
   name: string;
   price: number;
   image: string;
   quantity: number;
+  selectedUnit: UnitOption;
+  finalPrice: number;
 }
 
 const Index = () => {

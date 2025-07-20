@@ -1,4 +1,11 @@
+import { useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
+
+interface UnitOption {
+  label: string;
+  multiplier: number;
+  unit: string;
+}
 
 interface Product {
   id: number;
@@ -6,14 +13,17 @@ interface Product {
   price: number;
   image: string;
   description: string;
+  unit: string;
+  unitOptions: UnitOption[];
 }
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: (product: Product) => void;
+  onAddToCart: (product: Product & { selectedUnit: UnitOption; finalPrice: number }) => void;
 }
 
 const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
+  const [selectedUnit, setSelectedUnit] = useState(product.unitOptions[0]);
   return (
     <div className="card-fruit group">
       <div className="relative overflow-hidden rounded-xl mb-4">
@@ -29,13 +39,38 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
         <h3 className="text-xl font-semibold text-foreground">{product.name}</h3>
         <p className="text-muted-foreground text-sm">{product.description}</p>
         
+        {/* Unit Selection */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Select Unit:</label>
+          <select
+            value={selectedUnit.label}
+            onChange={(e) => {
+              const unit = product.unitOptions.find(u => u.label === e.target.value);
+              if (unit) setSelectedUnit(unit);
+            }}
+            className="w-full p-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
+          >
+            {product.unitOptions.map((option) => (
+              <option key={option.label} value={option.label}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</span>
-          <span className="text-sm text-muted-foreground">per lb</span>
+          <span className="text-2xl font-bold text-primary">
+            ₹{(product.price * selectedUnit.multiplier).toFixed(0)}
+          </span>
+          <span className="text-sm text-muted-foreground">per {selectedUnit.unit}</span>
         </div>
         
         <button
-          onClick={() => onAddToCart(product)}
+          onClick={() => onAddToCart({
+            ...product,
+            selectedUnit,
+            finalPrice: product.price * selectedUnit.multiplier
+          })}
           className="w-full btn-fruit btn-primary flex items-center justify-center gap-2"
         >
           <ShoppingCart className="w-4 h-4" />

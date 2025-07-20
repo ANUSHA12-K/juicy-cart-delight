@@ -4,44 +4,74 @@ const products = [
   {
     id: 1,
     name: 'Fresh Red Apples',
-    price: 3.99,
+    price: 80,
     image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&h=500&fit=crop&crop=center',
-    description: 'Crisp and sweet, perfect for snacking'
+    description: 'Crisp and sweet, perfect for snacking',
+    unit: 'kg',
+    unitOptions: [
+      { label: '1 kg', multiplier: 1, unit: 'kg' },
+      { label: '500 g', multiplier: 0.5, unit: 'g' }
+    ]
   },
   {
     id: 2,
     name: 'Juicy Oranges',
-    price: 2.99,
+    price: 60,
     image: 'https://images.unsplash.com/photo-1580052614034-c55d20bfee3b?w=500&h=500&fit=crop&crop=center',
-    description: 'Vitamin C packed citrus goodness'
+    description: 'Vitamin C packed citrus goodness',
+    unit: 'kg',
+    unitOptions: [
+      { label: '1 kg', multiplier: 1, unit: 'kg' },
+      { label: '500 g', multiplier: 0.5, unit: 'g' }
+    ]
   },
   {
     id: 3,
     name: 'Ripe Bananas',
-    price: 1.99,
+    price: 40,
     image: 'https://images.unsplash.com/photo-1528825871115-3581a5387919?w=500&h=500&fit=crop&crop=center',
-    description: 'Energy-rich potassium source'
+    description: 'Energy-rich potassium source',
+    unit: 'dozen',
+    unitOptions: [
+      { label: '1 dozen', multiplier: 1, unit: 'dozen' },
+      { label: '6 pieces', multiplier: 0.5, unit: 'pieces' }
+    ]
   },
   {
     id: 4,
     name: 'Sweet Strawberries',
-    price: 4.99,
+    price: 150,
     image: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=500&h=500&fit=crop&crop=center',
-    description: 'Antioxidant-rich berry delight'
+    description: 'Antioxidant-rich berry delight',
+    unit: 'kg',
+    unitOptions: [
+      { label: '1 kg', multiplier: 1, unit: 'kg' },
+      { label: '250 g', multiplier: 0.25, unit: 'g' }
+    ]
   },
   {
     id: 5,
     name: 'Purple Grapes',
-    price: 3.49,
+    price: 120,
     image: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=500&h=500&fit=crop&crop=center',
-    description: 'Sweet and juicy cluster'
+    description: 'Sweet and juicy cluster',
+    unit: 'kg',
+    unitOptions: [
+      { label: '1 kg', multiplier: 1, unit: 'kg' },
+      { label: '500 g', multiplier: 0.5, unit: 'g' }
+    ]
   },
   {
     id: 6,
     name: 'Tropical Mango',
-    price: 2.49,
+    price: 90,
     image: 'https://images.unsplash.com/photo-1553279013-112d27136a42?w=500&h=500&fit=crop&crop=center',
-    description: 'Exotic tropical sweetness'
+    description: 'Exotic tropical sweetness',
+    unit: 'kg',
+    unitOptions: [
+      { label: '1 kg', multiplier: 1, unit: 'kg' },
+      { label: '500 g', multiplier: 0.5, unit: 'g' }
+    ]
   }
 ];
 

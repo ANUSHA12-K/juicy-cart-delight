@@ -1,11 +1,19 @@
 import { X, Plus, Minus, Trash2 } from 'lucide-react';
 
+interface UnitOption {
+  label: string;
+  multiplier: number;
+  unit: string;
+}
+
 interface CartItem {
   id: number;
   name: string;
   price: number;
   image: string;
   quantity: number;
+  selectedUnit: UnitOption;
+  finalPrice: number;
 }
 
 interface CartSidebarProps {
@@ -23,7 +31,7 @@ const CartSidebar = ({
   onUpdateQuantity, 
   onRemoveItem 
 }: CartSidebarProps) => {
-  const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const total = cartItems.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
 
   if (!isOpen) return null;
 
@@ -72,7 +80,8 @@ const CartSidebar = ({
                     />
                     <div className="flex-1">
                       <h3 className="font-medium text-foreground">{item.name}</h3>
-                      <p className="text-primary font-semibold">${item.price.toFixed(2)}</p>
+                      <p className="text-primary font-semibold">₹{item.finalPrice.toFixed(0)} per {item.selectedUnit.unit}</p>
+                      <p className="text-xs text-muted-foreground">{item.selectedUnit.label}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
@@ -106,7 +115,7 @@ const CartSidebar = ({
             <div className="p-6 border-t border-border">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-lg font-semibold text-foreground">Total:</span>
-                <span className="text-2xl font-bold text-primary">${total.toFixed(2)}</span>
+                <span className="text-2xl font-bold text-primary">₹{total.toFixed(0)}</span>
               </div>
               <button className="w-full btn-fruit btn-primary">
                 Proceed to Checkout
