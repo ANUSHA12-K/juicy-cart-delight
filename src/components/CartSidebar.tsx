@@ -12,7 +12,6 @@ interface CartItem {
   product_id: string;
   product_name: string;
   price: number;
-  image: string;
   quantity: number;
   selected_unit: UnitOption;
   final_price: number;
@@ -77,11 +76,9 @@ const CartSidebar = ({
               <div className="space-y-4">
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex items-center gap-4 p-4 bg-muted/50 rounded-xl">
-                    <img
-                      src={item.image}
-                      alt={item.product_name}
-                      className="w-16 h-16 object-cover rounded-lg"
-                    />
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center">
+                      <span className="text-2xl">🍓</span>
+                    </div>
                     <div className="flex-1">
                       <h3 className="font-medium text-foreground">{item.product_name}</h3>
                       <p className="text-primary font-semibold">₹{item.final_price.toFixed(0)} per {item.selected_unit.unit}</p>

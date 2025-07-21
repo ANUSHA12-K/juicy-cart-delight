@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { getSessionId } from '@/utils/sessionManager';
+import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import ProductGrid from '@/components/ProductGrid';
@@ -21,7 +22,6 @@ interface CartItem {
   product_id: string;
   product_name: string;
   price: number;
-  image: string;
   quantity: number;
   selected_unit: UnitOption;
   final_price: number;
@@ -46,6 +46,7 @@ const Index = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     loadCartItems();
@@ -65,7 +66,6 @@ const Index = () => {
       // Transform the data to match our interface
       const transformedItems = (data || []).map((item: SupabaseCartItem) => ({
         ...item,
-        image: '', // We'll fetch this from products if needed
         selected_unit: typeof item.selected_unit === 'string' 
           ? JSON.parse(item.selected_unit) 
           : item.selected_unit
@@ -117,8 +117,7 @@ const Index = () => {
           price: product.price,
           quantity: 1,
           selected_unit: product.selectedUnit,
-          final_price: product.finalPrice,
-          image: product.image
+          final_price: product.finalPrice
         };
 
         const { data, error } = await supabase
@@ -132,15 +131,24 @@ const Index = () => {
         // Transform the returned data
         const transformedItem = {
           ...data,
-          image: newItem.image,
           selected_unit: typeof data.selected_unit === 'string' 
             ? JSON.parse(data.selected_unit) 
             : data.selected_unit
         };
         setCartItems(prevItems => [...prevItems, transformedItem]);
+        
+        toast({
+          title: "✅ Added to cart!",
+          description: `${product.name} has been added to your cart.`,
+        });
       }
     } catch (err) {
       console.error('Error adding to cart:', err);
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
