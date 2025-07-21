@@ -85,7 +85,7 @@ const Index = () => {
       
       // Check if item already exists in cart
       const existingItemIndex = cartItems.findIndex(item => 
-        item.product_id === product.id.toString() && 
+        item.product_id === product.id && 
         JSON.stringify(item.selected_unit) === JSON.stringify(product.selectedUnit)
       );
 
@@ -112,7 +112,7 @@ const Index = () => {
         // Insert new item
         const newItem = {
           session_id: sessionId,
-          product_id: product.id.toString(),
+          product_id: product.id,
           product_name: product.name,
           price: product.price,
           quantity: 1,

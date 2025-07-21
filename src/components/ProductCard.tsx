@@ -8,7 +8,7 @@ interface UnitOption {
 }
 
 interface Product {
-  id: number;
+  id: string; // Change to string for UUID compatibility
   name: string;
   price: number;
   image: string;

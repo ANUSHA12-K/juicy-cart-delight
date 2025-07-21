@@ -14,7 +14,7 @@ interface Product {
 }
 
 interface TransformedProduct {
-  id: number;
+  id: string; // Keep as string for UUID compatibility
   name: string;
   price: number;
   image: string;
@@ -134,14 +134,14 @@ const ProductGrid = ({ onAddToCart }: ProductGridProps) => {
             <ProductCard 
               key={product.id} 
               product={{
-                id: parseInt(product.id), // Convert to number for compatibility
+                id: product.id, // Keep as UUID string
                 name: product.name,
                 price: product.price,
                 image: product.image_url,
                 description: product.description,
                 unit: product.unit,
                 unitOptions: product.unit_options
-              } as TransformedProduct} 
+              } as TransformedProduct}
               onAddToCart={onAddToCart}
             />
           ))}
