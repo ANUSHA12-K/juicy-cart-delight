@@ -243,6 +243,7 @@ const Index = () => {
         cartItems={cartItems}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
+        user={user}
       />
     </div>
   );

@@ -1,4 +1,7 @@
 import { X, Plus, Minus, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { User } from '@supabase/supabase-js';
 
 interface UnitOption {
   label: string;
@@ -25,6 +28,7 @@ interface CartSidebarProps {
   cartItems: CartItem[];
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemoveItem: (id: string) => void;
+  user: User | null;
 }
 
 const CartSidebar = ({ 
@@ -32,9 +36,38 @@ const CartSidebar = ({
   onClose, 
   cartItems, 
   onUpdateQuantity, 
-  onRemoveItem 
+  onRemoveItem,
+  user
 }: CartSidebarProps) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const total = cartItems.reduce((sum, item) => sum + (item.final_price * item.quantity), 0);
+
+  const proceedToCheckout = () => {
+    // Check if cart is empty
+    if (cartItems.length === 0) {
+      toast({
+        title: "Your cart is empty",
+        description: "Add some items to your cart before checkout",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if user is logged in
+    if (!user) {
+      toast({
+        title: "Please login to continue",
+        description: "You need to be logged in to proceed to checkout",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Navigate to checkout page
+    navigate('/checkout');
+    onClose(); // Close the sidebar
+  };
 
   if (!isOpen) return null;
 
@@ -120,7 +153,10 @@ const CartSidebar = ({
                   ₹{new Intl.NumberFormat('en-IN').format(total)}
                 </span>
               </div>
-              <button className="w-full btn-fruit btn-primary">
+              <button 
+                onClick={proceedToCheckout}
+                className="w-full btn-fruit btn-primary"
+              >
                 Proceed to Checkout
               </button>
             </div>
