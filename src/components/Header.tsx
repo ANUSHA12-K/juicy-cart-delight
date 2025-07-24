@@ -70,6 +70,14 @@ const Header = ({ cartItems, onCartClick }: HeaderProps) => {
                   <Button
                     variant="ghost"
                     size="sm"
+                    onClick={() => navigate('/order-history')}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Orders
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => signOut()}
                     className="text-muted-foreground hover:text-foreground"
                   >
@@ -120,6 +128,17 @@ const Header = ({ cartItems, onCartClick }: HeaderProps) => {
                     <User className="w-4 h-4" />
                     <span>{user.email}</span>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      navigate('/order-history');
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full justify-start text-muted-foreground hover:text-foreground"
+                  >
+                    Orders
+                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"

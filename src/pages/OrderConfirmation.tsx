@@ -26,6 +26,8 @@ interface Order {
   order_items: OrderItem[];
   created_at: string;
   status: string;
+  estimated_delivery_time: string | null;
+  tracking_notes: string | null;
 }
 
 const OrderConfirmation = () => {
@@ -166,6 +168,19 @@ const OrderConfirmation = () => {
                     minute: '2-digit'
                   })}</p>
                   <p>Status: <span className="capitalize font-medium">{order.status}</span></p>
+                  {order.estimated_delivery_time && (
+                    <p>Estimated Delivery: <span className="font-medium">
+                      {new Date(order.estimated_delivery_time).toLocaleDateString('en-IN', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </span></p>
+                  )}
+                  {order.tracking_notes && (
+                    <p>Tracking: <span className="font-medium">{order.tracking_notes}</span></p>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -173,19 +188,19 @@ const OrderConfirmation = () => {
 
           {/* Action Buttons */}
           <div className="text-center space-y-4">
-            <Button 
-              onClick={() => navigate('/')}
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg"
-            >
-              View More Fruits
-            </Button>
-            <div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
+                onClick={() => navigate('/order-history')}
                 variant="outline"
-                onClick={() => navigate('/')}
                 className="border-green-600 text-green-600 hover:bg-green-50"
               >
-                Return to Home
+                View Order History
+              </Button>
+              <Button 
+                onClick={() => navigate('/')}
+                className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg"
+              >
+                View More Fruits
               </Button>
             </div>
           </div>

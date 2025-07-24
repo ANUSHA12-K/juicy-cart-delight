@@ -118,6 +118,9 @@ const Checkout = () => {
 
     try {
       // Create order in database
+      const deliveryDate = new Date();
+      deliveryDate.setDate(deliveryDate.getDate() + Math.floor(Math.random() * 3) + 3); // 3-5 days
+      
       const orderData = {
         user_id: user!.id,
         order_items: JSON.stringify(cartItems.map(item => ({
@@ -130,7 +133,9 @@ const Checkout = () => {
         }))),
         total_price: calculateTotal(),
         upi_id: upiId,
-        status: 'pending'
+        status: 'pending',
+        estimated_delivery_time: deliveryDate.toISOString(),
+        tracking_notes: 'Order received and being processed'
       };
 
       const { error: orderError } = await supabase
