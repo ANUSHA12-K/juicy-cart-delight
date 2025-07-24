@@ -3,6 +3,7 @@ import { ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import juicyCartLogo from '@/assets/juicycart-logo.png';
 
 interface HeaderProps {
   cartItems: number;
@@ -28,7 +29,7 @@ const Header = ({ cartItems, onCartClick }: HeaderProps) => {
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <img 
-              src="/lovable-uploads/ee2d4879-f25d-4a85-ad87-2221bd555d3f.png" 
+              src={juicyCartLogo} 
               alt="JuicyCart Logo" 
               className="w-8 h-8 object-contain"
             />
