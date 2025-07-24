@@ -29,10 +29,10 @@ const Header = ({ cartItems, onCartClick }: HeaderProps) => {
           <div className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/f1f772f2-9a62-4732-9265-679d8dde4e5a.png" 
-              alt="JuicyCartDelight Logo" 
+              alt="JuicyCart Logo" 
               className="w-8 h-8 object-contain"
             />
-            <span className="text-xl font-bold text-foreground">JuicyCartDelight</span>
+            <span className="text-xl font-bold text-foreground">JuicyCart</span>
           </div>
 
           {/* Desktop Navigation */}
