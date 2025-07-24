@@ -8,7 +8,7 @@ interface UnitOption {
 
 interface CartItem {
   id: string;
-  session_id: string;
+  user_id: string;
   product_id: string;
   product_name: string;
   price: number;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { getSessionId } from '@/utils/sessionManager';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
@@ -18,7 +18,7 @@ interface UnitOption {
 
 interface CartItem {
   id: string;
-  session_id: string;
+  user_id: string;
   product_id: string;
   product_name: string;
   price: number;
@@ -31,7 +31,7 @@ interface CartItem {
 
 interface SupabaseCartItem {
   id: string;
-  session_id: string;
+  user_id: string;
   product_id: string;
   product_name: string;
   price: number;
@@ -43,23 +43,30 @@ interface SupabaseCartItem {
 }
 
 const Index = () => {
+  const { user } = useAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    loadCartItems();
-  }, []);
+    if (user) {
+      loadCartItems();
+    } else {
+      setCartItems([]);
+      setLoading(false);
+    }
+  }, [user]);
 
   // Load cart items from Supabase on page load
   const loadCartItems = async () => {
+    if (!user) return;
+    
     try {
-      const sessionId = getSessionId();
       const { data, error } = await supabase
         .from('cart_items')
         .select('*')
-        .eq('session_id', sessionId);
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
@@ -80,9 +87,16 @@ const Index = () => {
 
   // Add item to cart and save to Supabase
   const handleAddToCart = async (product: any) => {
+    if (!user) {
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to add items to cart",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      const sessionId = getSessionId();
-      
       // Check if item already exists in cart
       const existingItemIndex = cartItems.findIndex(item => 
         item.product_id === product.id && 
@@ -99,7 +113,8 @@ const Index = () => {
         const { error } = await supabase
           .from('cart_items')
           .update({ quantity: updatedItem.quantity })
-          .eq('id', updatedItem.id);
+          .eq('id', updatedItem.id)
+          .eq('user_id', user.id);
 
         if (error) throw error;
 
@@ -111,7 +126,7 @@ const Index = () => {
       } else {
         // Insert new item
         const newItem = {
-          session_id: sessionId,
+          user_id: user.id,
           product_id: product.id,
           product_name: product.name,
           price: product.price,
@@ -154,6 +169,8 @@ const Index = () => {
 
   // Update item quantity in cart and Supabase
   const handleUpdateQuantity = async (id: string, quantity: number) => {
+    if (!user) return;
+    
     if (quantity <= 0) {
       handleRemoveItem(id);
       return;
@@ -163,7 +180,8 @@ const Index = () => {
       const { error } = await supabase
         .from('cart_items')
         .update({ quantity })
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
@@ -179,15 +197,23 @@ const Index = () => {
 
   // Remove item from cart and Supabase
   const handleRemoveItem = async (id: string) => {
+    if (!user) return;
+    
     try {
       const { error } = await supabase
         .from('cart_items')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
       setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+      
+      toast({
+        title: "Item removed",
+        description: "Item has been removed from your cart",
+      });
     } catch (err) {
       console.error('Error removing cart item:', err);
     }

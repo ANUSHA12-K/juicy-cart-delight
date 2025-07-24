@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const ContactSection = () => {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: ''
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -44,14 +48,34 @@ const ContactSection = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors = validateForm();
     
     if (Object.keys(newErrors).length === 0) {
-      // Form is valid
-      alert('Thank you for your message! We\'ll get back to you soon.');
-      setFormData({ name: '', email: '', message: '' });
+      setLoading(true);
+      try {
+        const { error } = await supabase
+          .from('contact_messages')
+          .insert([formData]);
+
+        if (error) throw error;
+
+        toast({
+          title: "Message sent!",
+          description: "Thank you! We'll get back to you soon.",
+        });
+        setFormData({ name: '', email: '', message: '' });
+      } catch (error) {
+        console.error('Error sending message:', error);
+        toast({
+          title: "Error",
+          description: "Failed to send message. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     } else {
       setErrors(newErrors);
     }
@@ -183,9 +207,10 @@ const ContactSection = () => {
 
               <button
                 type="submit"
-                className="w-full btn-fruit btn-primary"
+                disabled={loading}
+                className="w-full btn-fruit btn-primary disabled:opacity-50"
               >
-                Send Message
+                {loading ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </div>

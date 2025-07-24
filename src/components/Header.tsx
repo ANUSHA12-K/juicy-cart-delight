@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   cartItems: number;
@@ -7,6 +10,8 @@ interface HeaderProps {
 }
 
 const Header = ({ cartItems, onCartClick }: HeaderProps) => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
@@ -43,19 +48,46 @@ const Header = ({ cartItems, onCartClick }: HeaderProps) => {
             ))}
           </nav>
 
-          {/* Cart & Mobile Menu Button */}
+          {/* Actions */}
           <div className="flex items-center space-x-4">
-            <button
-              onClick={onCartClick}
-              className="relative p-2 text-foreground hover:text-primary transition-colors duration-200"
-            >
-              <ShoppingCart className="w-6 h-6" />
-              {cartItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartItems}
-                </span>
-              )}
-            </button>
+            {user ? (
+              <>
+                <button
+                  onClick={onCartClick}
+                  className="relative p-2 text-foreground hover:text-primary transition-colors duration-200"
+                >
+                  <ShoppingCart className="w-6 h-6" />
+                  {cartItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {cartItems}
+                    </span>
+                  )}
+                </button>
+                
+                <div className="hidden md:flex items-center space-x-2">
+                  <User className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-foreground">{user.email}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => signOut()}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/auth')}
+                className="hidden md:flex"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Sign In
+              </Button>
+            )}
 
             {/* Mobile menu button */}
             <button
@@ -81,6 +113,41 @@ const Header = ({ cartItems, onCartClick }: HeaderProps) => {
                   {item.name}
                 </a>
               ))}
+              
+              {user ? (
+                <div className="pt-4 border-t border-border space-y-2">
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <User className="w-4 h-4" />
+                    <span>{user.email}</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full justify-start text-muted-foreground hover:text-foreground"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <div className="pt-4 border-t border-border">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      navigate('/auth');
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Sign In
+                  </Button>
+                </div>
+              )}
             </nav>
           </div>
         )}
