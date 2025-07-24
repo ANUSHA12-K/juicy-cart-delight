@@ -24,8 +24,8 @@ export type Database = {
           product_name: string
           quantity: number
           selected_unit: Json
-          session_id: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -36,8 +36,8 @@ export type Database = {
           product_name: string
           quantity?: number
           selected_unit: Json
-          session_id: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -48,8 +48,8 @@ export type Database = {
           product_name?: string
           quantity?: number
           selected_unit?: Json
-          session_id?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -60,6 +60,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          order_items: Json
+          status: string
+          total_price: number
+          upi_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_items: Json
+          status?: string
+          total_price: number
+          upi_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_items?: Json
+          status?: string
+          total_price?: number
+          upi_id?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       products: {
         Row: {
@@ -91,6 +145,30 @@ export type Database = {
           price?: number
           unit?: string
           unit_options?: Json
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
