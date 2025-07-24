@@ -3,7 +3,6 @@ import { ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import LogoWithBackgroundRemoval from './LogoWithBackgroundRemoval';
 
 interface HeaderProps {
   cartItems: number;
@@ -28,10 +27,10 @@ const Header = ({ cartItems, onCartClick }: HeaderProps) => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <LogoWithBackgroundRemoval 
-              originalSrc="/lovable-uploads/9cdb2ad8-7d55-4373-8a0b-c802e88b1ae3.png" 
+            <img 
+              src="/lovable-uploads/f1f772f2-9a62-4732-9265-679d8dde4e5a.png" 
               alt="JuicyCart Logo" 
-              className="w-10 h-10 object-contain"
+              className="w-8 h-8 object-contain"
             />
             <span className="text-xl font-bold text-foreground">JuicyCart</span>
           </div>
