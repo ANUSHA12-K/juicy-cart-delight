@@ -81,16 +81,9 @@ const Checkout = () => {
   };
 
   const validateUpiId = (upi: string) => {
-    // Basic UPI ID validation
-    const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
-    const commonProviders = ['upi', 'paytm', 'phonepe', 'googlepay', 'amazonpay', 'oksbi', 'okhdfcbank', 'okicici', 'okaxis'];
-    
-    if (!upiRegex.test(upi)) {
-      return false;
-    }
-    
-    const provider = upi.split('@')[1].toLowerCase();
-    return commonProviders.includes(provider);
+    // Validate UPI ID format to accept all valid UPI providers
+    const upiRegex = /^[a-zA-Z0-9.\-_]{2,}@[a-zA-Z]{2,}$/;
+    return upiRegex.test(upi);
   };
 
   const handlePayment = async () => {
