@@ -28,7 +28,7 @@ const Header = ({ cartItems, onCartClick }: HeaderProps) => {
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <img 
-              src="/lovable-uploads/f1f772f2-9a62-4732-9265-679d8dde4e5a.png" 
+              src="/lovable-uploads/ee2d4879-f25d-4a85-ad87-2221bd555d3f.png" 
               alt="JuicyCart Logo" 
               className="w-8 h-8 object-contain"
             />
