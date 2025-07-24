@@ -156,9 +156,9 @@ const Checkout = () => {
         duration: 5000,
       });
 
-      // Redirect to success page or home
+      // Redirect to order confirmation page
       setTimeout(() => {
-        navigate('/?order=success');
+        navigate('/order-confirmation');
       }, 2000);
 
     } catch (error) {
