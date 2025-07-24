@@ -31,7 +31,7 @@ const Header = ({ cartItems, onCartClick }: HeaderProps) => {
             <img 
               src={juicyCartLogo} 
               alt="JuicyCart Logo" 
-              className="w-8 h-8 object-contain"
+              className="w-10 h-10 object-contain"
             />
             <span className="text-xl font-bold text-foreground">JuicyCart</span>
           </div>
